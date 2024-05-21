@@ -1,10 +1,9 @@
-FROM ubuntu:latest
+# Use Heroku's official Python runtime as a base image
+FROM heroku/python
 
 # Update package lists and install required dependencies
-RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends gcc libffi-dev musl-dev ffmpeg aria2 python3-pip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    ffmpeg aria2
 
 # Copy the contents of the current directory into the container at /app
 COPY . /app/
@@ -13,10 +12,10 @@ COPY . /app/
 WORKDIR /app/
 
 # Install Python dependencies using pip
-RUN pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir --upgrade setuptools \
-    && pip3 install --no-cache-dir --upgrade wheel \
-    && pip3 install --no-cache-dir --upgrade --requirement Installer
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --upgrade setuptools \
+    && pip install --no-cache-dir --upgrade wheel \
+    && pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Specify the command to run on container startup
-CMD ["python3", "modules/main.py"]
+CMD ["python", "modules/main.py"]
